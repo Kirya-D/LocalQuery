@@ -1,0 +1,28 @@
+{
+  "name": "local-query",
+  "version": "0.0.1",
+  "description": "Testing javascript desktop application development",
+  "license": "ISC",
+  "author": "Kirya Duncan II",
+  "type": "commonjs",
+  "main": "build/main.js",
+  "scripts": {
+    "start": "electron . --trace-warnings",
+    "package": "npx electron-packager . --all --overwrite --ignore=src --ignore=test --out=bin",
+    "compile": "tsc && npm run copy-files && npm start",
+    "copy-files": "copyfiles --up 1 src/**/*.html src/**/*.css src/**/*.json build/",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "marked": "^17.0.1",
+    "ollama": "^0.6.3"
+  },
+  "devDependencies": {
+    "copyfiles": "^2.4.1",
+    "electron": "^40.2.1",
+    "electron-packager": "^17.1.2",
+    "eslint": "^10.0.0",
+    "less": "^4.5.1",
+    "typescript": "^5.9.3"
+  }
+}

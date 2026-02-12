@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="index.css">
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self' http://127.0.0.1:11434/api/;" />
+    <title>LocalQuery</title>
+    <script defer src="./index.js"></script>
+</head>
+
+<body>
+    <ul id="session-list">
+        <li>Create Session</li>
+    </ul>
+    <div id="current-session">
+        <input id="session-title" type="text" placeholder="Session">
+        <select id="session-model">
+            <option value="" selected>Select a model</option>
+        </select>
+        <div id="session-chat">
+
+        </div>
+        <textarea id="session-query" placeholder="Enter Query"></textarea>
+    </div>
+    <ul id="note-list">
+        <li>Create Note</li>
+    </ul>
+    <div id="current-note">
+        <input id="note-title" type="text" placeholder="Note">
+        <textarea id="note-body" placeholder="Enter notes"></textarea>
+    </div>
+</body>
+
+</html>

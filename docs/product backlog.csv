@@ -1,0 +1,19 @@
+﻿Delivered,Priority,As a…,I want to…,So that…
+FALSE,1,User,Download new AI models to my device,I have model(s) that I can query
+FALSE,1,User,Create a session,I can query AI
+FALSE,1,User,View all downloaded AI models,I know what models I can query
+FALSE,1,User,Select an AI model to query,I can choose a specific model to query
+FALSE,1,User,Query AI with text,I can do basic text queries
+FALSE,1,User,View all sessions,I can view all my existing sessions
+FALSE,1,User,Rename a session,I can remember what the session is about
+FALSE,2,User,Save a session,I can come back to a session in the future
+FALSE,2,User,Load a session,I can continue from where a previous session left off
+FALSE,2,User,Uninstall AI models from my device,I can get rid of unused AI models
+FALSE,2,User,Delete a session,I can remove unnecessary or obsolete sessions
+FALSE,2,User,Query AI using my active desktop display,I don't need to format the contents of my query before sending it nor use multiple applications
+FALSE,2,User,Query AI using a snipped selection of my active desktop display,I can query based on a specific part of my display
+FALSE,2,User,Create a note,I can take notes with the help of AI such as summarization
+FALSE,2,User,Delete a note,I can delete old or obsolete notes
+FALSE,2,User,Edit a note,I can update notes
+FALSE,3,User,Summarize a note with AI,I can understand the contents of a note at a glance
+FALSE,3,User,Use multiple AI models in a single session,"I can utilize the strengths of different models for different types of queries (text, image, etc)"
