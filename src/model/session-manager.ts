@@ -5,12 +5,25 @@ export interface ISessionManager {
     /**
      * The title of the current session
      */
-    sessionTitle: () => string
+    getSessionTitle: () => string
+
+    /**
+     * Attempts to change the currently selected session's title to the given title
+     * @param newTitle The new title of the current session
+     * @throws Error if newTitle is an empty string or if newTitle is already in-use
+     */
+    setSessionTitle: (newTitle: string) => void
 
     /**
      * The model the current session is using
      */
-    sessionModel: () => string
+    getSessionModel: () => string
+
+    /**
+     * Changes the currently selected session's model to the given model
+     * @param newModel The new model of the current session
+     */
+    setSessionModel: (newModel: string) => void
 
     /**
      * Creates a new indexed session with the given title
@@ -25,14 +38,6 @@ export interface ISessionManager {
      * @returns A boolean for success
      */
     selectNewSession: (sessionTitle: string) => boolean
-
-    /**
-     * Attempts to change the currently selected session's title to the given title
-     * @param newtitle The new title of the current session
-     * @returns A boolean for success (false if the title already exists on another session)
-     * @throws Error if newtitle is an empty string or if newtitle is already in-use
-     */
-    changeSessionTitle: (newtitle: string) => void
 }
 
 export class SessionManager implements ISessionManager {
@@ -40,12 +45,35 @@ export class SessionManager implements ISessionManager {
     private sessions: Map<string, Session> = new Map<string, Session>()
     private currentSession: Session
 
-    public sessionTitle = () => {
+    public getSessionTitle = () => {
         return this.currentSession.title
     }
 
-    public sessionModel = () => {
+    public setSessionTitle = (newtitle: string) => {
+        const isInvalidTitle = newtitle.trim().length == 0
+        const sessionAlreadyNamedTitle = this.sessions.get(newtitle)
+        const canChangeTitle = sessionAlreadyNamedTitle == undefined ? true : sessionAlreadyNamedTitle == this.currentSession
+        const sessionExists = this.currentSession !== undefined
+
+        if (isInvalidTitle) {
+            throw new Error("Title can't be empty");
+        }
+        else if (sessionAlreadyNamedTitle) {
+            throw new Error(`A session with the title ${newtitle} already exists`);
+        }
+        else if (canChangeTitle && sessionExists) {
+            this.sessions.delete(this.currentSession.title)
+            this.currentSession.title = newtitle
+            this.sessions.set(newtitle, this.currentSession)
+        }
+    }
+
+    public getSessionModel = () => {
         return this.currentSession.model
+    }
+
+    public setSessionModel = (newModel:string) => {
+        this.currentSession.model = newModel
     }
 
     public createNewSession = (defaultSessiontitle: string) => {
@@ -65,24 +93,5 @@ export class SessionManager implements ISessionManager {
         }
 
         return success
-    }
-
-    public changeSessionTitle = (newtitle: string) => {
-        const isInvalidTitle = newtitle.trim().length == 0
-        const sessionAlreadyNamedTitle = this.sessions.get(newtitle)
-        const canChangeTitle = sessionAlreadyNamedTitle == undefined ? true : sessionAlreadyNamedTitle == this.currentSession
-        const sessionExists = this.currentSession !== undefined
-
-        if (isInvalidTitle) {
-            throw new Error("Title can't be empty");
-        }
-        else if (sessionAlreadyNamedTitle) {
-            throw new Error(`A session with the title ${newtitle} already exists`);
-        }
-        else if (canChangeTitle && sessionExists) {
-            this.sessions.delete(this.currentSession.title)
-            this.currentSession.title = newtitle
-            this.sessions.set(newtitle, this.currentSession)
-        }
     }
 }

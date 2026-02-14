@@ -1,19 +1,25 @@
 @startuml "ModelSessionsDiagram"
 
+interface "ISessionManager" as sessionManagerInterface {
+    +{method} getSessionTitle(): string
+    +{method} setSessionTitle(title: string): string
+    +{method} getSessionModel(): string
+    +{method} setSessionModel(model: string): string
+    +{method} createNewSession(title: string): string
+    +{method} selectNewSession(title: string): string
+}
+
+class "SessionManager" as sessionManagerClass {
+    -{field} sessions: map<string, Session>
+    -{field} currentSession: Session
+}
+
 class "Session" as sessionClass {
     +{field} title: string
     +{field} model: string
 }
-class "SessionManager" as sessionManagerClass {
-    -{field} sessions: map<string, Session>
-    -{field} currentSession: Session
-    +{field} sessionTitle: string
-    +{field} sessionModel: string
-    +{method} createNewSession(title: string): string
-    +{method} selectNewSession(title: string): string
-    +{method} changeSessionTitle(title: string): string
-}
 
-sessionManagerClass o-- sessionClass : " use"
+sessionManagerInterface <|.. sessionManagerClass
+sessionManagerClass o-- sessionClass
 
 @enduml

@@ -1,3 +1,4 @@
+import { Ollama } from "ollama"
 import { IIndexPageIds } from "../constants/index-ids.js"
 import { IVisibility } from "../constants/visibility.js"
 import { ISessionManager } from "../model/session-manager.js"
@@ -13,6 +14,7 @@ declare global {
         model: {
             sessionManager: ISessionManager
         }
+        ollama: Ollama
     }
 }
 
