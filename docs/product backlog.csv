@@ -1,11 +1,11 @@
 ﻿Delivered,Priority,As a…,I want to…,So that…
 FALSE,1,User,Download new AI models to my device,I have model(s) that I can query
-FALSE,1,User,Create a session,I can query AI
+TRUE,1,User,Create a session,I can query AI
 FALSE,1,User,View all downloaded AI models,I know what models I can query
 FALSE,1,User,Select an AI model to query,I can choose a specific model to query
 FALSE,1,User,Query AI with text,I can do basic text queries
-FALSE,1,User,View all sessions,I can view all my existing sessions
-FALSE,1,User,Rename a session,I can remember what the session is about
+TRUE,1,User,View all sessions,I can view all my existing sessions
+TRUE,1,User,Rename a session,I can remember what the session is about
 FALSE,2,User,Save a session,I can come back to a session in the future
 FALSE,2,User,Load a session,I can continue from where a previous session left off
 FALSE,2,User,Uninstall AI models from my device,I can get rid of unused AI models
