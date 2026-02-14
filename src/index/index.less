@@ -24,11 +24,12 @@
 .standard-list-style() {
     list-style: none;
     text-align: center;
-    padding: 10px;
+    padding: 0px 10px 10px 10px;
 
     li {
         text-align: center;
         border: 1px solid @backgroundColor;
+        margin-top: 10px;
         padding: 5px;
 
         &:hover {
@@ -39,9 +40,12 @@
 }
 
 body {
+    border-radius: 0px;
     width: 100vw;
     height: 100vh;
+    background-color: @foregroundColor;
     display: grid;
+    gap: 1px;
     grid-template-columns: 1fr 3fr 1fr;
     grid-template-rows: 1fr 1fr;
 }
@@ -58,17 +62,31 @@ textarea {
 #session-list {
     .vertically-scrollable();
     .standard-list-style();
+    border-radius: 0px;
     grid-column: 1;
     grid-row: 1 / span 2;
 }
 
-#current-session {
-    padding: 10px;
+#session-background {
     border-radius: 0px;
-    border-left: @defaultBorderSpec;
-    border-right: @defaultBorderSpec;
     grid-column: 2;
     grid-row: #session-list[grid-row];
+    display: grid;
+    align-items: center;
+    justify-items: center;
+    padding: 10px;
+
+    h1 {
+        text-align: center;
+    }
+}
+
+#current-session {
+    visibility: hidden;
+    border-radius: #session-background[border-radius];
+    grid-column: #session-background[grid-column];
+    grid-row: #session-background[grid-row];
+    padding: #session-background[padding];
 
     display: grid;
     gap: 10px;
@@ -99,15 +117,16 @@ textarea {
 #note-list {
     .vertically-scrollable();
     .standard-list-style();
+    border-radius: 0px;
     grid-column: 3;
     grid-row: 1;
 
-    border-radius: 0px;
     border-bottom: @defaultBorderSpec;
 }
 
 #current-note {
     .vertically-scrollable();
+    border-radius: 0px;
     grid-column: 3;
     grid-row: 2;
 
