@@ -2,7 +2,7 @@
 FALSE,1,User,Download new AI models to my device,I have model(s) that I can query
 TRUE,1,User,Create a session,I can query AI
 TRUE,1,User,View all downloaded AI models,I know what models I can query
-FALSE,1,User,Select an AI model to query,I can choose a specific model to query
+TRUE,1,User,Select an AI model to query,I can choose a specific model to query
 FALSE,1,User,Query AI with text,I can do basic text queries
 TRUE,1,User,View all sessions,I can view all my existing sessions
 TRUE,1,User,Rename a session,I can remember what the session is about

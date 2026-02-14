@@ -2,7 +2,7 @@ const sessionList = document.getElementById(window.constants.indexId.SessionList
 const createSessionButton = document.getElementById(window.constants.indexId.CreateSession) as HTMLButtonElement
 const currentSession = document.getElementById(window.constants.indexId.CurrentSession) as HTMLDivElement
 const sessionTitleInput = document.getElementById(window.constants.indexId.SessionTitle) as HTMLInputElement
-const sessionSelect = document.getElementById(window.constants.indexId.SessionModel) as HTMLSelectElement
+const sessionModelSelect = document.getElementById(window.constants.indexId.SessionModel) as HTMLSelectElement
 
 const sessionManager = window.model.sessionManager
 
@@ -24,6 +24,7 @@ function openExistingSession(sessionButton: HTMLLIElement) {
 
     if (success) {
         sessionTitleInput.value = sessionManager.getSessionTitle()
+        sessionModelSelect.value = sessionManager.getSessionModel()
         sessionTitleInput.oninput = () => { sessionButton.textContent = sessionTitleInput.value }
         sessionTitleInput.onchange = () => { onSessionTitleInputChanged(sessionButton) }
     } else {
@@ -47,21 +48,29 @@ function createNewSession() {
 createSessionButton.onclick = createNewSession
 
 async function refreshModelList() {
+    const currentlySelected = sessionModelSelect.value
     const updatedList = await window.ollama.list()
 
-    while (sessionSelect.options.length > 1) {
-        sessionSelect.remove(1);
+    while (sessionModelSelect.options.length > 1) {
+        sessionModelSelect.remove(1);
     }
 
     updatedList.models.forEach(model => {
         const modelName = model.name
         const newOption = document.createElement("option")
+        const wasPreviouslySelected = modelName == currentlySelected
 
         newOption.textContent = modelName
         newOption.value = modelName
+        newOption.selected = wasPreviouslySelected
 
-        sessionSelect.appendChild(newOption)
+        sessionModelSelect.appendChild(newOption)
     });
 }
 
-sessionSelect.onfocus = refreshModelList
+function SetModel() {
+    sessionManager.setSessionModel(sessionModelSelect.value)
+}
+
+sessionModelSelect.onfocus = refreshModelList
+sessionModelSelect.onblur = SetModel
