@@ -1,17 +1,18 @@
-const SessionList = document.getElementById(window.constants.indexId.SessionList) as HTMLUListElement
-const CreateSessionButton = document.getElementById(window.constants.indexId.CreateSession) as HTMLButtonElement
-const CurrentSession = document.getElementById(window.constants.indexId.CurrentSession) as HTMLDivElement
-const SessionTitleInput = document.getElementById(window.constants.indexId.SessionTitle) as HTMLInputElement
+const sessionList = document.getElementById(window.constants.indexId.SessionList) as HTMLUListElement
+const createSessionButton = document.getElementById(window.constants.indexId.CreateSession) as HTMLButtonElement
+const currentSession = document.getElementById(window.constants.indexId.CurrentSession) as HTMLDivElement
+const sessionTitleInput = document.getElementById(window.constants.indexId.SessionTitle) as HTMLInputElement
+const sessionSelect = document.getElementById(window.constants.indexId.SessionModel) as HTMLSelectElement
 
 const sessionManager = window.model.sessionManager
 
 function onSessionTitleInputChanged(associatedButton: HTMLLIElement) {
     try {
-        sessionManager.changeSessionTitle(SessionTitleInput.value)
+        sessionManager.setSessionTitle(sessionTitleInput.value)
     } catch (err) {
         if (err instanceof Error) {
-            associatedButton.textContent = sessionManager.sessionTitle()
-            SessionTitleInput.value = sessionManager.sessionTitle()
+            associatedButton.textContent = sessionManager.getSessionTitle()
+            sessionTitleInput.value = sessionManager.getSessionTitle()
 
             alert(err.message)
         }
@@ -22,25 +23,45 @@ function openExistingSession(sessionButton: HTMLLIElement) {
     const success = sessionManager.selectNewSession(sessionButton.textContent)
 
     if (success) {
-        SessionTitleInput.value = sessionManager.sessionTitle()
-        SessionTitleInput.oninput = () => { sessionButton.textContent = SessionTitleInput.value }
-        SessionTitleInput.onchange = () => { onSessionTitleInputChanged(sessionButton) }
+        sessionTitleInput.value = sessionManager.getSessionTitle()
+        sessionTitleInput.oninput = () => { sessionButton.textContent = sessionTitleInput.value }
+        sessionTitleInput.onchange = () => { onSessionTitleInputChanged(sessionButton) }
     } else {
-        SessionTitleInput.onchange = () => {}
+        sessionTitleInput.onchange = () => {}
     }
 }
 
 function createNewSession() {
-    const newSessionTitle = sessionManager.createNewSession(SessionTitleInput.placeholder)
+    const newSessionTitle = sessionManager.createNewSession(sessionTitleInput.placeholder)
     const newSessionButton = document.createElement("li")
 
     newSessionButton.textContent = newSessionTitle
-    SessionList.appendChild(newSessionButton)
+    sessionList.appendChild(newSessionButton)
     newSessionButton.onclick = () => { openExistingSession(newSessionButton) }
 
     openExistingSession(newSessionButton)
-    SessionTitleInput.value = newSessionTitle
-    CurrentSession.style.visibility = window.constants.visibility.Visible
+    sessionTitleInput.value = newSessionTitle
+    currentSession.style.visibility = window.constants.visibility.Visible
 }
 
-CreateSessionButton.onclick = createNewSession
+createSessionButton.onclick = createNewSession
+
+async function refreshModelList() {
+    const updatedList = await window.ollama.list()
+
+    while (sessionSelect.options.length > 1) {
+        sessionSelect.remove(1);
+    }
+
+    updatedList.models.forEach(model => {
+        const modelName = model.name
+        const newOption = document.createElement("option")
+
+        newOption.textContent = modelName
+        newOption.value = modelName
+
+        sessionSelect.appendChild(newOption)
+    });
+}
+
+sessionSelect.onfocus = refreshModelList
