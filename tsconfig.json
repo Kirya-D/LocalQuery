@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "typeRoots": ["./src/types"],
         "esModuleInterop": true,
         "outDir": "./build",
     },
