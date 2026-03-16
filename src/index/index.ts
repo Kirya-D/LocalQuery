@@ -44,7 +44,7 @@ namespace IndexView {
             sessionModelSelect.remove(1);
         }
 
-        updatedList.models.forEach(model => {
+        updatedList.forEach(model => {
             const modelName = model.name
             const newOption = document.createElement("option")
             const wasPreviouslySelected = modelName == viewmodel.sessionModel

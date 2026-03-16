@@ -8,9 +8,9 @@ let sessionManager = new SessionManager()
 suite("getSessionTitle", () => {
     beforeEach(() => sessionManager = new SessionManager())
 
-    test(() => {
+    test("get session title", () => {
         const newSession = sessionManager.createNewSession(sessionName)
-        sessionManager.selectNewSession(newSession)
+        sessionManager.switchToSession(newSession)
 
         const actual = sessionManager.getSessionTitle()
         const expected = newSession
@@ -32,7 +32,7 @@ suite("setSessionTitle", () => {
     test("throws when session title already in-use", () => {
         const sessionOneName = sessionManager.createNewSession(sessionName)
         const sessionTwoName = sessionManager.createNewSession(sessionName)
-        sessionManager.selectNewSession(sessionTwoName)
+        sessionManager.switchToSession(sessionTwoName)
 
         assert.throws(() => { const actual = sessionManager.setSessionTitle(sessionOneName) })
     })
@@ -40,8 +40,7 @@ suite("setSessionTitle", () => {
     test("successful title change", () => {
         const definedTitle = "New Title"
         const sessionOneName = sessionManager.createNewSession(sessionName)
-        const sessionTwoName = sessionManager.createNewSession(sessionName)
-        sessionManager.selectNewSession(sessionTwoName)
+        sessionManager.switchToSession(sessionOneName)
         sessionManager.setSessionTitle(definedTitle)
 
         const actual = sessionManager.getSessionTitle()
@@ -56,7 +55,7 @@ suite("SessionModel", () => {
     
     test("getter", () => {
         const newSession = sessionManager.createNewSession(sessionName)
-        sessionManager.selectNewSession(newSession)
+        sessionManager.switchToSession(newSession)
 
         const actual = sessionManager.getSessionModel()
         const expected = ""
@@ -67,7 +66,7 @@ suite("SessionModel", () => {
     test("setter", () => {
         const newModel = "Fresh Model"
         const newSession = sessionManager.createNewSession(sessionName)
-        sessionManager.selectNewSession(newSession)
+        sessionManager.switchToSession(newSession)
         sessionManager.setSessionModel(newModel)
 
         const actual = sessionManager.getSessionModel()
@@ -112,7 +111,7 @@ suite("selectNewSession", () => {
     beforeEach(() => sessionManager = new SessionManager())
 
     test("no session with name", () => {
-        const actual = sessionManager.selectNewSession("nonexistant-name")
+        const actual = sessionManager.switchToSession("nonexistant-name")
         const expected = false
 
         assert.strictEqual(actual, expected)
@@ -120,7 +119,7 @@ suite("selectNewSession", () => {
 
     test("session with name exists", () => {
         const newSessionName = sessionManager.createNewSession(sessionName)
-        const actual = sessionManager.selectNewSession(newSessionName)
+        const actual = sessionManager.switchToSession(newSessionName)
         const expected = true
 
         assert.strictEqual(actual, expected)

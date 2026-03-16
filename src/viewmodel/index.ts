@@ -68,6 +68,6 @@ export class IndexViewmodel {
      */
     public getModelList = async () => {
         const listedModels = await this._ollamaAPI.list()
-        return listedModels
+        return listedModels.models
     }
 }
