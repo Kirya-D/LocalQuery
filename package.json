@@ -5,28 +5,28 @@
   "license": "ISC",
   "author": "Kirya Duncan II",
   "type": "commonjs",
-  "main": "build/src/main.js",
+  "main": "build/main.js",
   "scripts": {
     "start": "electron . --trace-warnings",
     "package": "npx electron-packager . --all --overwrite --ignore=src --ignore=test --out=bin",
-    "copy-files": "copyfiles src/**/*.html src/**/*.css src/**/*.json build/",
+    "copy-files": "copyfiles src/**/*.html src/**/*.css src/**/*.json -u 1 build",
     "compile": "tsc && npm run copy-files",
-    "test": "=node --test **/*.test.js",
-    "test:coverage": "node --experimental-test-coverage --test **/*.test.js",
-    "autotest": "node --test --watch **/*.test.js",
-    "autotest:coverage": "node --experimental-test-coverage --test --watch **/*.test.js"
+    "test": "c8 --all --clean -r=text -r=lcov --src src node --import=tsx --test",
+    "autotest": "nodemon -e ts --exec npm run test"
   },
   "dependencies": {
     "marked": "^17.0.1",
     "ollama": "^0.6.3"
   },
   "devDependencies": {
+    "c8": "^11.0.0",
     "copyfiles": "^2.4.1",
     "electron": "^40.2.1",
     "electron-packager": "^17.1.2",
     "eslint": "^10.0.0",
     "less": "^4.5.1",
-    "onchange": "^7.1.0",
+    "nodemon": "^3.1.14",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
 }

@@ -1,8 +1,7 @@
 {
     "compilerOptions": {
-        "typeRoots": ["./src/types"],
         "esModuleInterop": true,
         "outDir": "./build",
     },
-    "include": ["src/**/*", "tests/**/*"]
+    "include": ["src/**/*"]
 }

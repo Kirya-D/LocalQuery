@@ -6,7 +6,7 @@ const createWindow = () => {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(app.getAppPath(), "build/src/preload/preload.js"),
+            preload: path.join(app.getAppPath(), "build/preload/preload.js"),
             sandbox: false,
             nodeIntegration: false,
             contextIsolation: true
@@ -16,7 +16,7 @@ const createWindow = () => {
     
     win.menuBarVisible = true
 
-    win.loadFile('build/src/index/index.html')
+    win.loadFile('build/index/index.html')
 }
 
 app.whenReady().then(() => {
