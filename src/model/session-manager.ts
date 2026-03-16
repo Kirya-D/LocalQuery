@@ -6,11 +6,14 @@ import { Session } from "./session.js"
 export class SessionManager {
 
     private sessions: Map<string, Session> = new Map<string, Session>()
-    private currentSession: Session
+    private currentSession: Session = null
 
     /**
      * Returns the title of the session.
+     * 
      * @returns The title of the current session
+     * @throws Get: If current session is null
+     * @precondition current session != null
      */
     public getSessionTitle = (): string => {
         return this.currentSession.title
@@ -18,27 +21,30 @@ export class SessionManager {
 
     /**
      * Attempts to set the title of the current session to given title.
+     * 
      * @param newTitle The new title to use for the session
-     * @throws If title is empty or a session with this title already exists
+     * @throws Set: If title is empty, or a session with this title already exists
+     * @precondition current session != null
      */
-    public setSessionTitle = (newtitle: string) => {
-        const sessionAlreadyNamedTitle = this.sessions.get(newtitle)
-        const canChangeTitle = sessionAlreadyNamedTitle == undefined ? true : sessionAlreadyNamedTitle == this.currentSession
-        const sessionExists = this.currentSession !== undefined
+    public setSessionTitle = (newTitle: string) => {
+        if (this.currentSession == null) {
+            throw new Error("A session has not been selected yet")
+        }
 
-        if (sessionAlreadyNamedTitle) {
-            throw new Error(`A session with the title ${newtitle} already exists`);
+        if (!this.titleIsAvailable(newTitle)) {
+            throw new Error(`A session with the title ${newTitle} already exists`);
         }
-        else if (canChangeTitle && sessionExists) {
-            this.currentSession.title = newtitle
-            this.sessions.delete(this.currentSession.title)
-            this.sessions.set(newtitle, this.currentSession)
-        }
+
+        const oldTitle = this.currentSession.title
+        this.currentSession.title = newTitle
+        this.sessions.set(newTitle, this.currentSession)
+        this.sessions.delete(oldTitle)
     }
 
     /**
      * Returns the name of the AI model for the current session.
      * 
+     * @throws If current session is null
      * @returns The model of the current session
      */
     public getSessionModel = (): string => {
@@ -46,8 +52,11 @@ export class SessionManager {
     }
 
     /**
+     * Sets the AI model of the current session
      * 
      * @param newModel The name of the new AI model to use for the current session
+     * @throws If current session is null
+     * @postcondition this.getSessionModel() == newModel
      */
     public setSessionModel = (newModel:string): void => {
         this.currentSession.model = newModel
@@ -60,11 +69,22 @@ export class SessionManager {
      * @returns The title of the session
      */
     public createNewSession = (defaultSessiontitle: string): string => {
-        const sessiontitle = `${defaultSessiontitle} ${this.sessions.size + 1}`
-        const newSession = new Session(sessiontitle, "")
-        this.sessions.set(sessiontitle, newSession)
+        let startIndex = this.sessions.size + 1
+        let sessionTitle = `${defaultSessiontitle} ${startIndex}`
+
+        while (!this.titleIsAvailable(sessionTitle)) {
+            startIndex++
+            sessionTitle = `${defaultSessiontitle} ${startIndex}`
+        }
+        
+        const newSession = new Session(sessionTitle, "")
+        this.sessions.set(sessionTitle, newSession)
 
         return newSession.title
+    }
+
+    private titleIsAvailable = (title: string): boolean => {
+        return !this.sessions.has(title)
     }
 
     /**
@@ -72,6 +92,7 @@ export class SessionManager {
      * 
      * @param sessiontitle The title of the session to switch to
      * @returns True if a session with the given title is found otherwise False
+     * @postcondition If session is found this.getSessionTitle() == session.title && this.getSessionModel() == session.model
      */
     public switchToSession = (sessiontitle: string): boolean => {
         const selected = this.sessions.get(sessiontitle)

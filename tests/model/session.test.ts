@@ -3,13 +3,10 @@ import { suite, test } from "node:test"
 import { Session } from "../../src/model/session.js"
 
 suite("constructor", () => {
-    test("throws when empty title", () => {
-        assert.throws(() => { new Session("", "") })
-    })
-
-    test("title", () => {
+    test("valid title", () => {
         const title = "Session Title"
-        const newSession = new Session(title, "model")
+        const model = "Session Model"
+        const newSession = new Session(title, model)
 
         const expected = title
         const actual = newSession.title
@@ -17,7 +14,19 @@ suite("constructor", () => {
         assert.strictEqual(actual, expected)
     })
 
-    test("model", () => {
+    test("throws when empty title", () => {
+        const title = ""
+        const model = "Session Model"
+        assert.throws(() => { new Session(title, model) })
+    })
+
+    test("throws when empty title with spaces", () => {
+        const title = "   "
+        const model = "Session Model"
+        assert.throws(() => { new Session(title, model) })
+    })
+
+    test("valid model", () => {
         const model = "Session Model"
         const newSession = new Session("filler title", model)
 

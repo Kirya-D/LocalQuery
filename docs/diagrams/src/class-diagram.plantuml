@@ -1,25 +1,78 @@
-@startuml "ModelSessionsDiagram"
+@startuml "ClassDiagram"
+left to right direction
 
-interface "ISessionManager" as sessionManagerInterface {
-    +{method} getSessionTitle(): string
-    +{method} setSessionTitle(title: string): string
-    +{method} getSessionModel(): string
-    +{method} setSessionModel(model: string): string
-    +{method} createNewSession(title: string): string
-    +{method} selectNewSession(title: string): string
+folder constants {
+    enum IndexPageIds {
+        SessionList
+        CreateSession
+        CurrentSession
+        SessionTitle
+        SessionModel
+        SessionChat
+        SessionQuery
+        NoteList
+        CurrentNote
+        NoteTitle
+        NoteBody
+    }
+    enum Visibility {
+        Visible
+        Hidden
+        Collapse
+    }
+
+    IndexPageIds -[Hidden]- Visibility
 }
 
-class "SessionManager" as sessionManagerClass {
-    -{field} sessions: map<string, Session>
-    -{field} currentSession: Session
+frame View {
+    class Index {}
 }
 
-class "Session" as sessionClass {
-    +{field} title: string
-    +{field} model: string
+frame ViewModel {
+    class IndexViewmodel {
+        -{field} sessionTitle: string {get, set}
+        -{field} sessionModel: string {get, set}
+        -{field} sessionManager: SessionManager
+        -{field} ollamaAPI: Ollama
+        +{method} openSession(title: string): bool
+        +{method} createNewSession(placeholder: string): string
+        +{method} getModelList(): list[ModelResponse]
+    }
 }
 
-sessionManagerInterface <|.. sessionManagerClass
-sessionManagerClass o-- sessionClass
+frame Model {
+    class SessionManager {
+        -{field} sessions: map<string, Session>
+        -{field} currentSession: Session
+        +{method} getSessionTitle(): string
+        +{method} setSessionTitle(title: string): void
+        +{method} getSessionModel(): string
+        +{method} setSessionModel(model: string): void
+        +{method} createNewSession(defaultTitle: string): string
+        +{method} switchToSession(sessionTitle: string): bool
+    }
+
+    class Session {
+        -{field} model: string {get, set}
+        -{field} title: string {get, set}
+    }
+}
+
+' View - Viewmodel Relations
+Index --> IndexViewmodel
+
+' Viewmodel - Model Relations
+IndexViewmodel o-- SessionManager
+
+' Model - Model Relations
+SessionManager *-- Session
+
+' Other Relations
+Index --> IndexPageIds
+Index -> Visibility
+
+' Orient diagram
+View -[Hidden]right- ViewModel
+ViewModel -[Hidden]right- Model
 
 @enduml

@@ -1,5 +1,5 @@
 import { contextBridge } from "electron"
-import { IndexPageIds } from "../constants/index-ids.js"
+import { IndexPageIds } from "../constants/index-page-ids.js"
 import { Visibility } from "../constants/visibility.js"
 import { IndexViewmodel } from "../viewmodel/index.js"
 

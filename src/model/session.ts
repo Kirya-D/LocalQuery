@@ -23,7 +23,9 @@ export class Session {
 
     /**
      * The title of the session
-     * @throws If title's trimmed length == 0
+     * 
+     * @throws Set: If title's trimmed length == 0
+     * @precondition Set: newTitle.trim().length > 0
      */
     public set title(v: string) {
         if (v.trim().length == 0) {
@@ -37,6 +39,9 @@ export class Session {
      * 
      * @param title The title of the session
      * @param model The model the session is using
+     * @throws If title.trim().length == 0
+     * @precondition title.trim().length > 0
+     * @postcondition this.title == title && model == this.model
      */
     constructor(title: string, model: string) {
         this.title = title

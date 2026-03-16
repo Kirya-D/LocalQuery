@@ -24,7 +24,7 @@ namespace IndexView {
     function sessionButtonClicked(sessionButton: HTMLButtonElement) {
         const sessionTitle = sessionButton.value
 
-        if (viewmodel.OpenSession(sessionTitle)) {
+        if (viewmodel.openSession(sessionTitle)) {
             sessionTitleInput.value = this._sessionManager.getSessionTitle()
             sessionModelSelect.value = this._sessionManager.getSessionModel()
             sessionTitleInput.oninput = () => { sessionButton.value = sessionTitleInput.value }
