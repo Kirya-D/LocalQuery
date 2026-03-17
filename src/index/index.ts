@@ -1,13 +1,16 @@
 namespace IndexView {
 
-    const sessionList = document.getElementById(window.constants.index.SessionList) as HTMLUListElement
-    const createSessionButton = document.getElementById(window.constants.index.CreateSession) as HTMLButtonElement
-    const currentSession = document.getElementById(window.constants.index.CurrentSession) as HTMLDivElement
-    const sessionTitleInput = document.getElementById(window.constants.index.SessionTitle) as HTMLInputElement
-    const sessionModelSelect = document.getElementById(window.constants.index.SessionModel) as HTMLSelectElement
+    const sessionList = document.getElementById(window.constants.indexIds.SessionList) as HTMLUListElement
+    const createSessionButton = document.getElementById(window.constants.indexIds.CreateSession) as HTMLButtonElement
+    const currentSession = document.getElementById(window.constants.indexIds.CurrentSession) as HTMLDivElement
+    const sessionTitleInput = document.getElementById(window.constants.indexIds.SessionTitle) as HTMLInputElement
+    const sessionModelSelect = document.getElementById(window.constants.indexIds.SessionModel) as HTMLSelectElement
+    const sessionChatDiv = document.getElementById(window.constants.indexIds.SessionChat) as HTMLDivElement
+    const queryTextArea = document.getElementById(window.constants.indexIds.SessionQuery) as HTMLTextAreaElement
+    const querySubmitButton = document.getElementById(window.constants.indexIds.QuerySubmit) as HTMLButtonElement
 
     const viewmodel = window.viewmodels.index
-    console.log(viewmodel.getModelList)
+    type MessageSenderType = typeof window.constants.messageSender[keyof typeof window.constants.messageSender]
 
     function createSessionButtonClicked() {
         const newSessionTitle = viewmodel.createNewSession(sessionTitleInput.placeholder)
@@ -57,9 +60,36 @@ namespace IndexView {
         })
     }
 
+    function showMessage(message: string, sender: MessageSenderType) {
+        let messageId = ""
+
+        switch (sender) {
+            case window.constants.messageSender.User:
+                messageId = window.constants.indexIds.UserMessage
+                break
+            case window.constants.messageSender.Model:
+                messageId = window.constants.indexIds.ModelMessage
+                break
+            default:
+                return
+        }
+
+        const messageDiv = document.createElement("div")
+        messageDiv.id = messageId
+        messageDiv.innerHTML = message
+
+        sessionChatDiv.appendChild(messageDiv)
+    }
+
+    async function sendQuery() {
+        const query = queryTextArea.value
+        showMessage(query, window.constants.messageSender.User)
+        queryTextArea.value = ""
+    }
+
     createSessionButton.onclick = createSessionButtonClicked
+    querySubmitButton.onclick = sendQuery
 
     sessionModelSelect.onfocus = refreshModelList
     sessionModelSelect.onblur = () => { viewmodel.sessionModel = sessionModelSelect.value }
-
 }

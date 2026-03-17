@@ -9,19 +9,29 @@ folder constants {
         SessionTitle
         SessionModel
         SessionChat
+        UserMessage
+        ModelMessage
         SessionQuery
+        QuerySubmit
         NoteList
         CurrentNote
         NoteTitle
         NoteBody
     }
+
     enum Visibility {
         Visible
         Hidden
         Collapse
     }
 
+    enum MessageSender {
+        User
+        Model
+    }
+
     IndexPageIds -[Hidden]- Visibility
+    Visibility -[Hidden]- MessageSender
 }
 
 frame View {
@@ -68,8 +78,9 @@ IndexViewmodel o-- SessionManager
 SessionManager *-- Session
 
 ' Other Relations
-Index --> IndexPageIds
-Index -> Visibility
+Index -> IndexPageIds
+Index --> MessageSender
+Index --> Visibility
 
 ' Orient diagram
 View -[Hidden]right- ViewModel
