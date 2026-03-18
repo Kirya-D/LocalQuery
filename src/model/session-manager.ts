@@ -12,7 +12,7 @@ export class SessionManager {
      * Returns the title of the session.
      * 
      * @returns The title of the current session
-     * @throws Get: If current session is null
+     * @throws If current session is null
      * @precondition current session != null
      */
     public getSessionTitle = (): string => {
@@ -24,7 +24,7 @@ export class SessionManager {
      * 
      * @param newTitle The new title to use for the session
      * @throws Set: If title is empty, or a session with this title already exists
-     * @precondition current session != null
+     * @precondition current session !== null
      */
     public setSessionTitle = (newTitle: string) => {
         if (this.currentSession == null) {
@@ -32,13 +32,12 @@ export class SessionManager {
         }
 
         if (!this.titleIsAvailable(newTitle)) {
-            throw new Error(`A session with the title ${newTitle} already exists`);
+            throw new Error(`A session with the title ${newTitle} already exists`)
         }
 
-        const oldTitle = this.currentSession.title
+        this.sessions.delete(this.currentSession.title)
         this.currentSession.title = newTitle
         this.sessions.set(newTitle, this.currentSession)
-        this.sessions.delete(oldTitle)
     }
 
     /**
@@ -70,17 +69,19 @@ export class SessionManager {
      */
     public createNewSession = (defaultSessiontitle: string): string => {
         let startIndex = this.sessions.size + 1
-        let sessionTitle = `${defaultSessiontitle} ${startIndex}`
 
-        while (!this.titleIsAvailable(sessionTitle)) {
+        while (true) {
+            const sessionTitle = `${defaultSessiontitle} ${startIndex}`
+
+            if (this.titleIsAvailable(sessionTitle)) {
+                const newSession = new Session(sessionTitle)
+                this.sessions.set(sessionTitle, newSession)
+
+                return newSession.title
+            }
+
             startIndex++
-            sessionTitle = `${defaultSessiontitle} ${startIndex}`
         }
-        
-        const newSession = new Session(sessionTitle, "")
-        this.sessions.set(sessionTitle, newSession)
-
-        return newSession.title
     }
 
     private titleIsAvailable = (title: string): boolean => {

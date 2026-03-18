@@ -1,5 +1,4 @@
 namespace IndexView {
-
     const sessionList = document.getElementById(window.constants.indexIds.SessionList) as HTMLUListElement
     const createSessionButton = document.getElementById(window.constants.indexIds.CreateSession) as HTMLButtonElement
     const currentSession = document.getElementById(window.constants.indexIds.CurrentSession) as HTMLDivElement
@@ -9,55 +8,62 @@ namespace IndexView {
     const queryTextArea = document.getElementById(window.constants.indexIds.SessionQuery) as HTMLTextAreaElement
     const querySubmitButton = document.getElementById(window.constants.indexIds.QuerySubmit) as HTMLButtonElement
 
-    const viewmodel = window.viewmodels.index
     type MessageSenderType = typeof window.constants.messageSender[keyof typeof window.constants.messageSender]
+    const viewmodel = window.viewmodels.index
+
+    createSessionButton.onclick = createSessionButtonClicked
+    querySubmitButton.onclick = sendQuery
+
+    sessionModelSelect.onfocus = refreshModelList
+    sessionModelSelect.onchange = updateSelectedModel
 
     function createSessionButtonClicked() {
         const newSessionTitle = viewmodel.createNewSession(sessionTitleInput.placeholder)
-        const newSessionButton = document.createElement("li")
+        const newSessionListButton = document.createElement("li")
 
-        newSessionButton.textContent = newSessionTitle
-        newSessionButton.onclick = () => { sessionButtonClicked }
-        sessionTitleInput.value = newSessionTitle
+        newSessionListButton.textContent = newSessionTitle
+        newSessionListButton.onclick = () => { sessionButtonClicked(newSessionListButton) }
 
-        sessionList.appendChild(newSessionButton)
-        currentSession.style.visibility = window.constants.visibility.Visible
+        sessionList.appendChild(newSessionListButton)
+
+        sessionButtonClicked(newSessionListButton)
     }
 
-    function sessionButtonClicked(sessionButton: HTMLButtonElement) {
-        const sessionTitle = sessionButton.value
+    function sessionButtonClicked(sessionButton: HTMLLIElement) {
+        const sessionTitle = sessionButton.textContent
 
         if (viewmodel.openSession(sessionTitle)) {
-            sessionTitleInput.value = this._sessionManager.getSessionTitle()
-            sessionModelSelect.value = this._sessionManager.getSessionModel()
-            sessionTitleInput.oninput = () => { sessionButton.value = sessionTitleInput.value }
+            updateDisplayedSessionInformation()
+
+            sessionTitleInput.oninput = () => { sessionButton.textContent = sessionTitleInput.value }
             sessionTitleInput.onchange = () => {
-                sessionButton.value = sessionTitleInput.value
-                viewmodel.sessionTitle = sessionTitleInput.value
+                sessionButton.textContent = sessionTitleInput.value
+                viewmodel.setSessionTitle(sessionTitleInput.value)
             }
+
+            currentSession.style.visibility = window.constants.visibility.Visible
         } else {
             sessionTitleInput.onchange = () => {}
         }
     }
 
-    async function refreshModelList() {
-        const updatedList = await viewmodel.getModelList();
+    function updateDisplayedSessionInformation() {
+        const sessionModel = viewmodel.getSessionModel()
+        sessionTitleInput.value = viewmodel.getSessionTitle()
 
-        while (sessionModelSelect.options.length > 1) {
-            sessionModelSelect.remove(1);
+        for (let i = 1; i < sessionModelSelect.options.length; i++) {
+            const option = sessionModelSelect[i] as HTMLOptionElement
+            option.selected = option.value == sessionModel
         }
+    }
 
-        updatedList.forEach(model => {
-            const modelName = model.name
-            const newOption = document.createElement("option")
-            const wasPreviouslySelected = modelName == viewmodel.sessionModel
+    async function sendQuery() {
+        const query = queryTextArea.value
+        showMessage(query, window.constants.messageSender.User)
+        queryTextArea.value = ""
 
-            newOption.textContent = modelName
-            newOption.value = modelName
-            newOption.selected = wasPreviouslySelected
-
-            sessionModelSelect.appendChild(newOption)
-        })
+        const queryResult = await viewmodel.sendQuery(query)
+        showMessage(queryResult, window.constants.messageSender.Model)
     }
 
     function showMessage(message: string, sender: MessageSenderType) {
@@ -81,15 +87,27 @@ namespace IndexView {
         sessionChatDiv.appendChild(messageDiv)
     }
 
-    async function sendQuery() {
-        const query = queryTextArea.value
-        showMessage(query, window.constants.messageSender.User)
-        queryTextArea.value = ""
+    async function refreshModelList() {
+        const updatedList = await viewmodel.getModelList()
+
+        while (sessionModelSelect.options.length > 1) {
+            sessionModelSelect.remove(1)
+        }
+
+        updatedList.forEach(model => {
+            const modelName = model.name
+            const newOption = document.createElement("option")
+            const wasPreviouslySelected = modelName == viewmodel.getSessionModel()
+
+            newOption.textContent = modelName
+            newOption.value = modelName
+            newOption.selected = wasPreviouslySelected
+
+            sessionModelSelect.appendChild(newOption)
+        })
     }
 
-    createSessionButton.onclick = createSessionButtonClicked
-    querySubmitButton.onclick = sendQuery
-
-    sessionModelSelect.onfocus = refreshModelList
-    sessionModelSelect.onblur = () => { viewmodel.sessionModel = sessionModelSelect.value }
+    function updateSelectedModel() {
+        viewmodel.setSessionModel(sessionModelSelect.value)
+    }
 }

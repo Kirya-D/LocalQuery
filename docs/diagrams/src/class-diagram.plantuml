@@ -40,13 +40,16 @@ frame View {
 
 frame ViewModel {
     class IndexViewmodel {
-        -{field} sessionTitle: string {get, set}
-        -{field} sessionModel: string {get, set}
         -{field} sessionManager: SessionManager
         -{field} ollamaAPI: Ollama
+        +{method} getSessionTitle(): string
+        +{method} setSessionTitle(title: string): void
+        +{method} getSessionModel(): string
+        +{method} setSessionModel(model: string): void
         +{method} openSession(title: string): bool
         +{method} createNewSession(placeholder: string): string
         +{method} getModelList(): list[ModelResponse]
+        +{method} sendQuery(query: string): string
     }
 }
 

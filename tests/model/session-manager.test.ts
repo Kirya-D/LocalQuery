@@ -47,7 +47,7 @@ suite("sessionModel", () => {
         sessionManager.switchToSession(newSession)
 
         const actual = sessionManager.getSessionModel()
-        const expected = ""
+        const expected = "Select a model"
 
         assert.strictEqual(actual, expected)
     })
