@@ -1,5 +1,6 @@
 @startuml "ClassDiagram"
 left to right direction
+skinparam linetype ortho
 
 folder constants {
     enum IndexPageIds {
@@ -9,19 +10,29 @@ folder constants {
         SessionTitle
         SessionModel
         SessionChat
+        UserMessage
+        ModelMessage
         SessionQuery
+        QuerySubmit
         NoteList
         CurrentNote
         NoteTitle
         NoteBody
     }
+
     enum Visibility {
         Visible
         Hidden
         Collapse
     }
 
+    enum MessageSender {
+        User
+        Model
+    }
+
     IndexPageIds -[Hidden]- Visibility
+    Visibility -[Hidden]- MessageSender
 }
 
 frame View {
@@ -30,13 +41,16 @@ frame View {
 
 frame ViewModel {
     class IndexViewmodel {
-        -{field} sessionTitle: string {get, set}
-        -{field} sessionModel: string {get, set}
         -{field} sessionManager: SessionManager
         -{field} ollamaAPI: Ollama
+        +{method} getSessionTitle(): string
+        +{method} setSessionTitle(title: string): void
+        +{method} getSessionModel(): string
+        +{method} setSessionModel(model: string): void
         +{method} openSession(title: string): bool
         +{method} createNewSession(placeholder: string): string
         +{method} getModelList(): list[ModelResponse]
+        +{method} sendQuery(query: string): string
     }
 }
 
@@ -50,26 +64,37 @@ frame Model {
         +{method} setSessionModel(model: string): void
         +{method} createNewSession(defaultTitle: string): string
         +{method} switchToSession(sessionTitle: string): bool
+        +{method} queryModel(query: string): string
     }
 
     class Session {
         -{field} model: string {get, set}
         -{field} title: string {get, set}
+        -{field} messageHistory: Array<MessageExchange> {get}
+        +{method} addMessageExchange(query: string, response: string): void
+    }
+
+    class MessageExchange {
+        -{field} query: string {get}
+        -{field} response: string {get}
     }
 }
 
-' View - Viewmodel Relations
+' Class Relations
+' View - Viewmodel
 Index --> IndexViewmodel
 
-' Viewmodel - Model Relations
+' Viewmodel - Model
 IndexViewmodel o-- SessionManager
 
-' Model - Model Relations
+' Model - Model
 SessionManager *-- Session
+Session -> MessageExchange
 
-' Other Relations
-Index --> IndexPageIds
-Index -> Visibility
+' Other
+Index -> IndexPageIds
+Index --> MessageSender
+Index --> Visibility
 
 ' Orient diagram
 View -[Hidden]right- ViewModel

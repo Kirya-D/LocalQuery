@@ -1,3 +1,4 @@
+import { Ollama } from "ollama"
 import { Session } from "./session.js"
 
 /**
@@ -6,16 +7,20 @@ import { Session } from "./session.js"
 export class SessionManager {
 
     private sessions: Map<string, Session> = new Map<string, Session>()
-    private currentSession: Session = null
+    private currentSession: Session | null = null
+    private ollamaAPI: Ollama = new Ollama()
 
     /**
      * Returns the title of the session.
      * 
      * @returns The title of the current session
-     * @throws Get: If current session is null
+     * @throws If current session is null
      * @precondition current session != null
      */
     public getSessionTitle = (): string => {
+        if (this.currentSession == null) {
+            throw new Error("Session does not exist")
+        }
         return this.currentSession.title
     }
 
@@ -24,7 +29,7 @@ export class SessionManager {
      * 
      * @param newTitle The new title to use for the session
      * @throws Set: If title is empty, or a session with this title already exists
-     * @precondition current session != null
+     * @precondition current session !== null
      */
     public setSessionTitle = (newTitle: string) => {
         if (this.currentSession == null) {
@@ -32,13 +37,12 @@ export class SessionManager {
         }
 
         if (!this.titleIsAvailable(newTitle)) {
-            throw new Error(`A session with the title ${newTitle} already exists`);
+            throw new Error(`A session with the title ${newTitle} already exists`)
         }
 
-        const oldTitle = this.currentSession.title
+        this.sessions.delete(this.currentSession.title)
         this.currentSession.title = newTitle
         this.sessions.set(newTitle, this.currentSession)
-        this.sessions.delete(oldTitle)
     }
 
     /**
@@ -48,6 +52,9 @@ export class SessionManager {
      * @returns The model of the current session
      */
     public getSessionModel = (): string => {
+        if (this.currentSession == null) {
+            throw new Error("Session does not exist")
+        }
         return this.currentSession.model
     }
 
@@ -58,7 +65,10 @@ export class SessionManager {
      * @throws If current session is null
      * @postcondition this.getSessionModel() == newModel
      */
-    public setSessionModel = (newModel:string): void => {
+    public setSessionModel = (newModel: string): void => {
+        if (this.currentSession == null) {
+            throw new Error("Session does not exist")
+        }
         this.currentSession.model = newModel
     }
 
@@ -70,17 +80,19 @@ export class SessionManager {
      */
     public createNewSession = (defaultSessiontitle: string): string => {
         let startIndex = this.sessions.size + 1
-        let sessionTitle = `${defaultSessiontitle} ${startIndex}`
 
-        while (!this.titleIsAvailable(sessionTitle)) {
+        while (true) {
+            const sessionTitle = `${defaultSessiontitle} ${startIndex}`
+
+            if (this.titleIsAvailable(sessionTitle)) {
+                const newSession = new Session(sessionTitle)
+                this.sessions.set(sessionTitle, newSession)
+
+                return newSession.title
+            }
+
             startIndex++
-            sessionTitle = `${defaultSessiontitle} ${startIndex}`
         }
-        
-        const newSession = new Session(sessionTitle, "")
-        this.sessions.set(sessionTitle, newSession)
-
-        return newSession.title
     }
 
     private titleIsAvailable = (title: string): boolean => {
@@ -103,5 +115,34 @@ export class SessionManager {
         }
 
         return success
+    }
+
+    /**
+     * Sends a query to the current session's model and returns its response.
+     * Stores the query and response information in the session
+     * 
+     * @param query The content to query
+     * @returns The model's response
+     * @precondition Current session !== null
+     * @throws If current session is null
+     */
+    public queryModel = async (query: string) => {
+        if (this.currentSession == null) {
+            throw new Error("Session does not exist")
+        }
+        
+        const chatRequest = {
+            "model": this.getSessionModel(),
+            "messages": [{
+                "role": "user",
+                "content": query
+            }],
+        }
+
+        const chatResponse = await this.ollamaAPI.chat(chatRequest)
+        const responseContent = chatResponse.message.content
+
+        this.currentSession.addMessageExchange(query, responseContent)
+        return responseContent
     }
 }

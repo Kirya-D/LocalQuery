@@ -1,24 +1,27 @@
+import { MessageExchange } from "./message-exchange"
 
 /**
  * Stores information relevant to an AI query session
  */
 export class Session {
-    private _model: string;
-    private _title : string;
+
+    private _model: string
+    private _title: string
+    private _messageHistory: Array<MessageExchange>
     
     public get model() : string {
-        return this._model;
+        return this._model
     }
 
     /**
      * The model of the session
      */
     public set model (v : string) {
-        this._model = v;
+        this._model = v
     }
 
     public get title() : string {
-        return this._title;
+        return this._title
     }
 
     /**
@@ -29,9 +32,19 @@ export class Session {
      */
     public set title(v: string) {
         if (v.trim().length == 0) {
-            throw new Error("Title can't be empty");
+            throw new Error("Title can't be empty")
         }
-        this._title = v;
+        this._title = v
+    }
+
+    public get messageHistory() {
+        const deepCopy = new Array<MessageExchange>()
+
+        this._messageHistory.forEach((exchange) => {
+            deepCopy.push(Object.assign({}, exchange))
+        })
+
+        return deepCopy
     }
 
     /**
@@ -43,8 +56,14 @@ export class Session {
      * @precondition title.trim().length > 0
      * @postcondition this.title == title && model == this.model
      */
-    constructor(title: string, model: string) {
+    constructor(title: string, model: string = "Select a model") {
         this.title = title
         this.model = model
+        this._messageHistory = new Array<MessageExchange>()
+    }
+
+    public addMessageExchange = (query: string, response: string) => {
+        const newExchange = new MessageExchange(query, response)
+        this._messageHistory.push(newExchange)
     }
 }

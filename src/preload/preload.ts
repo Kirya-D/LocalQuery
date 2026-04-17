@@ -1,14 +1,16 @@
 import { contextBridge } from "electron"
 import { IndexPageIds } from "../constants/index-page-ids.js"
+import { MessageSender } from "../constants/message-sender.js"
 import { Visibility } from "../constants/visibility.js"
-import { IndexViewmodel } from "../viewmodel/index.js"
+import { IndexViewmodel } from "../viewmodel/index-viewmodel.js"
 
 export const constantsAPI = {
-    index: IndexPageIds,
+    indexIds: IndexPageIds,
+    messageSender: MessageSender,
     visibility: Visibility
 }
 
-const indexVM = new IndexViewmodel();
+const indexVM = new IndexViewmodel()
 
 export const viewmodelsAPI = {
     index: indexVM

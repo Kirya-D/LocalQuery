@@ -1,17 +1,17 @@
 @backgroundColor: #202020;
 @foregroundColor: #FFFFFF;
 @defaultBorderSpec: 1px solid @foregroundColor;
+@defaultBorderRadius: 15px;
 
 * {
     padding: 0px;
     margin: 0px;
     background-color: @backgroundColor;
     color: @foregroundColor;
-    border-radius: 15px;
     box-sizing: border-box;
     overflow: hidden;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    min-width: fit-content;
+    font-size: medium;
     max-width: 100%;
     max-height: 100%;
     resize: none;
@@ -29,6 +29,7 @@
     li {
         text-align: center;
         border: 1px solid @backgroundColor;
+        border-radius: @defaultBorderRadius;
         margin-top: 10px;
         padding: 5px;
 
@@ -40,7 +41,6 @@
 }
 
 body {
-    border-radius: 0px;
     width: 100vw;
     height: 100vh;
     background-color: @foregroundColor;
@@ -51,24 +51,24 @@ body {
 }
 
 input {
+    border-radius: @defaultBorderRadius;
     text-align: center;
     padding: 5px;
 }
 
 textarea {
+    border-radius: @defaultBorderRadius;
     padding: 0.5em;
 }
 
 #session-list {
     .vertically-scrollable();
     .standard-list-style();
-    border-radius: 0px;
     grid-column: 1;
     grid-row: 1 / span 2;
 }
 
 #session-background {
-    border-radius: 0px;
     grid-column: 2;
     grid-row: #session-list[grid-row];
     display: grid;
@@ -83,7 +83,6 @@ textarea {
 
 #current-session {
     visibility: hidden;
-    border-radius: #session-background[border-radius];
     grid-column: #session-background[grid-column];
     grid-row: #session-background[grid-row];
     padding: #session-background[padding];
@@ -100,6 +99,7 @@ textarea {
 }
 
 #session-model {
+    border-radius: @defaultBorderRadius;
     grid-column: 2;
     grid-row: 1;
 }
@@ -107,17 +107,45 @@ textarea {
 #session-chat {
     grid-column: 1 / span 2;
     grid-row: 2;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-items: left;
+    padding: 20px;
+    gap: 20px;
+
+    #model-message {
+        border-radius: @defaultBorderRadius;
+        padding: 10px;
+        border: @defaultBorderSpec;
+        overflow: hidden;
+        resize: none;
+        max-width: 70%;
+        align-self: flex-start;
+        min-height: fit-content;
+    }
+
+    #user-message {
+        #model-message();
+        align-self: flex-end;
+        justify-self: flex-end;
+    }
 }
 
 #session-query {
-    grid-column: #session-chat[grid-column];
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#query-submit {
+    border-radius: @defaultBorderRadius;
+    grid-column: 2;
     grid-row: 3;
 }
 
 #note-list {
     .vertically-scrollable();
     .standard-list-style();
-    border-radius: 0px;
     grid-column: 3;
     grid-row: 1;
 
@@ -126,9 +154,9 @@ textarea {
 
 #current-note {
     .vertically-scrollable();
-    border-radius: 0px;
     grid-column: 3;
     grid-row: 2;
+    min-width: fit-content;
 
     display: grid;
     grid-template-columns: 1fr;

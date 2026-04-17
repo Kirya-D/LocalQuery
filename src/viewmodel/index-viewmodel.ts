@@ -9,7 +9,7 @@ export class IndexViewmodel {
     private _sessionManager: SessionManager = new SessionManager()
     private _ollamaAPI: Ollama = new Ollama()
 
-    public get sessionTitle(): string {
+    public getSessionTitle = (): string => {
         return this._sessionManager.getSessionTitle()
     }
 
@@ -19,21 +19,21 @@ export class IndexViewmodel {
      * @throws Get: If current session is null
      * @throws Set: If title is empty or a session with the given title already exists
      */
-    public set sessionTitle(newTitle: string) {
+    public setSessionTitle = (newTitle: string) => {
         this._sessionManager.setSessionTitle(newTitle)
     }
 
-    public get sessionModel(): string {
+    public getSessionModel = (): string => {
         return this._sessionManager.getSessionModel()
-    }
+    }   
 
     /**
      * The name of the AI model for the current session.
      * 
-     * @precondition Current session != null
+     * @precondition Current session !== null
      * @throws If current session is null
      */
-    public set sessionModel(newModel: string) {
+    public setSessionModel = (newModel: string) => {
         this._sessionManager.setSessionModel(newModel)
     }
 
@@ -70,5 +70,17 @@ export class IndexViewmodel {
     public getModelList = async () => {
         const listedModels = await this._ollamaAPI.list()
         return listedModels.models
+    }
+
+    /**
+     * Queries the current session's model and returns its response
+     * 
+     * @param query The content to query
+     * @returns The model's response
+     * @precondition Current session !== null
+     * @throws If current session is null
+     */
+    public sendQuery = async (query: string) => {
+        return this._sessionManager.queryModel(query)
     }
 }
