@@ -1,5 +1,5 @@
 import assert from "node:assert/strict"
-import { suite, test } from "node:test"
+import { beforeEach, suite, test } from "node:test"
 import { Session } from "../../src/model/session.js"
 
 suite("constructor", () => {
@@ -32,6 +32,22 @@ suite("constructor", () => {
 
         const expected = model
         const actual = newSession.model
+
+        assert.strictEqual(actual, expected)
+    })
+})
+
+let session = new Session("Title")
+suite("addMessageExchange", () => {
+    beforeEach(() => session = new Session("Title"))
+
+    test("When empty message history", () => {
+        const onlyRequest = "User Request"
+        const onlyResponse = "Model Response"
+        session.addMessageExchange(onlyRequest, onlyResponse)
+
+        const expected = 1
+        const actual = session.messageHistory.length
 
         assert.strictEqual(actual, expected)
     })

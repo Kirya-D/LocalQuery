@@ -2,7 +2,7 @@ import { contextBridge } from "electron"
 import { IndexPageIds } from "../constants/index-page-ids.js"
 import { MessageSender } from "../constants/message-sender.js"
 import { Visibility } from "../constants/visibility.js"
-import { IndexViewmodel } from "../viewmodel/index.js"
+import { IndexViewmodel } from "../viewmodel/index-viewmodel.js"
 
 export const constantsAPI = {
     indexIds: IndexPageIds,

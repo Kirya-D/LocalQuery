@@ -81,16 +81,6 @@ export class IndexViewmodel {
      * @throws If current session is null
      */
     public sendQuery = async (query: string) => {
-        const chatRequest = {
-            "model": this.getSessionModel(),
-            "messages": [{
-                "role": "user",
-                "content": query
-            }],
-        }
-
-        const chatResponse = await this._ollamaAPI.chat(chatRequest)
-
-        return chatResponse.message.content
+        return this._sessionManager.queryModel(query)
     }
 }

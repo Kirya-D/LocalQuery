@@ -1,5 +1,6 @@
 @startuml "ClassDiagram"
 left to right direction
+skinparam linetype ortho
 
 folder constants {
     enum IndexPageIds {
@@ -63,24 +64,34 @@ frame Model {
         +{method} setSessionModel(model: string): void
         +{method} createNewSession(defaultTitle: string): string
         +{method} switchToSession(sessionTitle: string): bool
+        +{method} queryModel(query: string): string
     }
 
     class Session {
         -{field} model: string {get, set}
         -{field} title: string {get, set}
+        -{field} messageHistory: Array<MessageExchange> {get}
+        +{method} addMessageExchange(query: string, response: string): void
+    }
+
+    class MessageExchange {
+        -{field} query: string {get}
+        -{field} response: string {get}
     }
 }
 
-' View - Viewmodel Relations
+' Class Relations
+' View - Viewmodel
 Index --> IndexViewmodel
 
-' Viewmodel - Model Relations
+' Viewmodel - Model
 IndexViewmodel o-- SessionManager
 
-' Model - Model Relations
+' Model - Model
 SessionManager *-- Session
+Session -> MessageExchange
 
-' Other Relations
+' Other
 Index -> IndexPageIds
 Index --> MessageSender
 Index --> Visibility

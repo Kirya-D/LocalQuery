@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { beforeEach, suite, test } from "node:test"
-import { IndexViewmodel } from "../../src/viewmodel/index.js"
+import { IndexViewmodel } from "../../src/viewmodel/index-viewmodel.js"
 
 let indexVM = new IndexViewmodel()
 
